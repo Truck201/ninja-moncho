@@ -1,8 +1,7 @@
-export default class retryOver extends Phaser.Scene {
+export default class retry extends Phaser.Scene {
     constructor() {
     super("main");
-    
-}
+    }
 
     preload () {
         //imports
@@ -11,10 +10,11 @@ export default class retryOver extends Phaser.Scene {
 
     create () {
         //scene
+        over = this.physics.add.staticGroup(300,300, "GameOver")
     }
 
 
     update () {
         //actions
     }
-
+}

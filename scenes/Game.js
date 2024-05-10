@@ -13,7 +13,6 @@ export default class Game extends Phaser.Scene {
   preload() {
     //cargar assets
 
-
    //import cielo
     this.load.image("cielo","../public/assets/Cielo.webp");
 
@@ -24,16 +23,27 @@ export default class Game extends Phaser.Scene {
     this.load.image("personaje","../public/assets/Ninja.png");
 
     //import star
-    this.load.image("stars", "../public/assets/star.png")
+    this.load.image("star", "../public/assets/star.png")
 
     //import bomba
     this.load.image("circle","../public/assets/circle.png")
   }
 
   create() {
+    
+    
     //map
+
   // const map = this.add.tilemap("map");
   // const tiles = map.addTilesImage("main","tiles")
+
+    //animaciones personaje
+    //this.anims.create({
+    //  key: "idle",
+    //  frames: this.anims.generateFrameNumbers("personaje",{start:0,end:3}),
+    //  frameRate:10,
+    //  repeat:-1,
+    //});
 
     //crear elementos
     const cielo = this.add.image(400, 300, "cielo");
@@ -46,8 +56,21 @@ export default class Game extends Phaser.Scene {
     plataformas.create(600, 400, "plataforma").setScale(0.5,0.9).setSize(200,28).setOffset(100,2)
 
     //agregar estrellas
-    stars = this.physics.add.staticGroup();
-    stars.create(400, 200, "stars").setScale(0.02,0.02).setOffset(0.2,0.2);
+    allStars = this.physics.add.group({
+      key: 'star',
+      repeat: 8,
+      setScale: {x: 0.02, y: 0.02},
+      setOffset: {x:3, y:3},
+      setXY: { x: 110, y: 120, stepX: 80 }
+  });
+  
+  allStars.children.iterate(function (child) {
+  
+      child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+  
+  });
+    
+  
 
     //agregar puntucación 
     score = 0
@@ -67,15 +90,13 @@ export default class Game extends Phaser.Scene {
 
     // colisiones  // agregar eventos ??
     this.physics.add.collider(plataformas, personaje); // colision entre plataforma y personaje
-    this.physics.add.collider(circle, personaje, this.personajeDamage, null, this); // colisión entre circle y personaje 
+    this.physics.add.collider(circle, personaje, personajeDamage, null, this); // colisión entre circle y personaje 
     this.physics.add.collider(circle, plataformas) // colisión entre circle y plataformas
     this.physics.add.collider(personaje, plataformas); // colision entre personaje y plataforma 
     
-    this.physics.add.overlap(personaje, stars, this.pickPowerUp, null, this);
+    this.physics.add.collider(allStars, plataformas);
+    this.physics.add.overlap(personaje, allStars, pickPowerUp, null, this);
 
-    function pickPowerUp (personaje, star) {
-      stars.disableBody(true,true);
-    }
 
   }
 
@@ -105,7 +126,6 @@ export default class Game extends Phaser.Scene {
       else {
         personaje.setVelocityX(0)
       }
-
       if (cursors.down.isDown === true) {
         personaje.setVelocityY(300)
       } 
@@ -113,14 +133,21 @@ export default class Game extends Phaser.Scene {
   }
 }
 
+
 var circle
 var score
-var stars
+var allStars
 var personaje
 var plataformas
 var cursors
+var dmg
+var Over
 
-function personajeDamage(damage) {
-      scene: [retryOver]
-  return damage
+function personajeDamage(dmg) {
+      scene: [retry]
+  return dmg
+}
+
+function pickPowerUp (personaje, allStars) {
+  allStars.disableBody(true,true);
 }

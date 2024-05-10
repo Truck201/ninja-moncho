@@ -28,6 +28,7 @@ const config = {
   // Only the first scene will be shown
   // Remember to import the scene before adding it to the list
   scene: [Game],
+  
 };
 
 // Create a new Phaser game instance
