@@ -13,6 +13,7 @@ export default class Game extends Phaser.Scene {
   preload() {
     //cargar assets
 
+
    //import cielo
     this.load.image("cielo","../public/assets/Cielo.webp");
 
@@ -24,9 +25,16 @@ export default class Game extends Phaser.Scene {
 
     //import star
     this.load.image("stars", "../public/assets/star.png")
+
+    //import bomba
+    this.load.image("circle","../public/assets/circle.png")
   }
 
   create() {
+    //map
+  // const map = this.add.tilemap("map");
+  // const tiles = map.addTilesImage("main","tiles")
+
     //crear elementos
     const cielo = this.add.image(400, 300, "cielo");
     cielo.setScale(2);
@@ -39,12 +47,14 @@ export default class Game extends Phaser.Scene {
 
     //agregar estrellas
     stars = this.physics.add.staticGroup();
-    stars.create(400, 200, "stars").setScale(0.02,0.02);
-    
+    stars.create(400, 200, "stars").setScale(0.02,0.02).setOffset(0.2,0.2);
+
     //agregar puntucación 
     score = 0
-    //agregar "bombas"
 
+    //agregar "obstáculos"
+    circle = this.physics.add.sprite(300,-10, "circle").setScale(0.01,0.01)
+    
     //agregar personaje
     personaje = this.physics.add.sprite(400, 500, "personaje");
     personaje.setScale(0.08);
@@ -52,24 +62,24 @@ export default class Game extends Phaser.Scene {
     personaje.setOffset(50,90)
     personaje.setCollideWorldBounds(true);
 
-    //agregar colision entre personaje y plataforma 
-    this.physics.add.collider(personaje, plataformas);
-
     // cursors
     cursors = this.input.keyboard.createCursorKeys(); // uso las flechas y barra espaciadora
 
-    // colisiones
-    this.physics.add.collider(plataformas, personaje); // Detecta las colisiones entre objetos
+    // colisiones  // agregar eventos ??
+    this.physics.add.collider(plataformas, personaje); // colision entre plataforma y personaje
+    this.physics.add.collider(circle, personaje, this.personajeDamage, null, this); // colisión entre circle y personaje 
+    this.physics.add.collider(circle, plataformas) // colisión entre circle y plataformas
+    this.physics.add.collider(personaje, plataformas); // colision entre personaje y plataforma 
+    
+    this.physics.add.overlap(personaje, stars, this.pickPowerUp, null, this);
+
+    function pickPowerUp (personaje, star) {
+      stars.disableBody(true,true);
+    }
+
   }
 
   update() {
-    
-    // Score
-    if (this.physics.add.collider(personaje, stars) === true) {
-      score = score + 1
-    
-    }
-    
     // Manejo de jugador
     if (cursors.right.isDown && personaje.body.touching.down) {
       personaje.setVelocityX(190)
@@ -99,13 +109,18 @@ export default class Game extends Phaser.Scene {
       if (cursors.down.isDown === true) {
         personaje.setVelocityY(300)
       } 
-
     }
   }
 }
 
+var circle
 var score
 var stars
 var personaje
 var plataformas
 var cursors
+
+function personajeDamage(damage) {
+      scene: [retryOver]
+  return damage
+}

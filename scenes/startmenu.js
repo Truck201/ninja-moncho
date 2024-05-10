@@ -1,4 +1,4 @@
-export default class retryOver extends Phaser.Scene {
+export default class startMenu extends Phaser.Scene {
     constructor() {
     super("main");
     
@@ -6,7 +6,6 @@ export default class retryOver extends Phaser.Scene {
 
     preload () {
         //imports
-        this.load.image("GamesOver","../public/assets/gameOver.png")
     }
 
     create () {
@@ -17,4 +16,3 @@ export default class retryOver extends Phaser.Scene {
     update () {
         //actions
     }
-
