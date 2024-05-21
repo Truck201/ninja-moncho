@@ -8,6 +8,10 @@ export default class Game extends Phaser.Scene {
   init(data) {
     // Recupera el valore score
     score = data.score
+
+    // Gameover False
+   
+    this.timer = 10;
   }
 
   preload() {
@@ -31,7 +35,6 @@ export default class Game extends Phaser.Scene {
 
   create() {
     
-    
     //map
 
     // const map = this.add.tilemap("map");
@@ -54,6 +57,9 @@ export default class Game extends Phaser.Scene {
     // crear el texto de puntos, con sus propiedades; Inicializamos en 0
     txtScore = this.add.text(10,20,"Score: 0",{font:"20px Helvetica", fill:"#ff0000"})
 
+    // crear un contador
+
+    
     //crear plataforma
     plataformas = this.physics.add.staticGroup();
     plataformas.create(400, 580, "plataforma").setScale(2,1.3).setSize(800,45).setOffset(-200,-5) // Size tamaño, y offset posición x e y
@@ -110,6 +116,8 @@ export default class Game extends Phaser.Scene {
   }
 
   update() {
+
+    
     // Manejo de jugador
     if (cursors.right.isDown && personaje.body.touching.down) {
       personaje.setVelocityX(190)
@@ -175,5 +183,10 @@ function pickStar (personaje, star) {
 
 function gameOver () {
   this.game.pause()
+  this.scene.start("game-over")
 }
 
+function handleTimer () {
+  this.timer -= -1
+  this.timerText ()
+}
