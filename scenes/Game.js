@@ -11,6 +11,8 @@ export default class Game extends Phaser.Scene {
 
     // Gameover False
     contador = 0;
+    tiempo.minutos = "00"
+    tiempo.segundos = "00"
   }
 
   create() {
