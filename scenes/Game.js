@@ -1,5 +1,5 @@
 // URL to explain PHASER scene: https://rexrainbow.github.io/phaser3-rex-notes/docs/site/scene/
-
+import Preload from "./preload.js";
 export default class Game extends Phaser.Scene {
   constructor() {
     super("main");
@@ -10,30 +10,18 @@ export default class Game extends Phaser.Scene {
     score = data.score
 
     // Gameover False
-   
-    this.timer = 10;
-  }
-
-  preload() {
-    //cargar assets
-
-   //import cielo
-    this.load.image("cielo","../public/assets/Cielo.webp");
-
-    //import plataforma
-    this.load.image("plataforma","../public/assets/platform.png");
-
-    //import personaje
-    this.load.image("personaje","../public/assets/Ninja.png");
-
-    //import star
-    this.load.image("star", "../public/assets/star.png")
-
-    //import bomba
-    this.load.image("enemigo","../public/assets/circle.png")
+    contador = 0;
   }
 
   create() {
+    
+    this.time.addEvent({
+      delay:1000,
+      loop: true,
+      callback: () => {
+        cuenta();
+      },
+    })
     
     //map
 
@@ -56,10 +44,10 @@ export default class Game extends Phaser.Scene {
     score = 0
     // crear el texto de puntos, con sus propiedades; Inicializamos en 0
     txtScore = this.add.text(10,20,"Score: 0",{font:"20px Helvetica", fill:"#ff0000"})
+    contador = this.add.text(480,10,"Tiempo: 00:00 ",{font:"20px Helvetica", fill:"#ff0000"})
 
     // crear un contador
 
-    
     //crear plataforma
     plataformas = this.physics.add.staticGroup();
     plataformas.create(400, 580, "plataforma").setScale(2,1.3).setSize(800,45).setOffset(-200,-5) // Size tamaño, y offset posición x e y
@@ -113,11 +101,12 @@ export default class Game extends Phaser.Scene {
 
     this.physics.add.overlap(personaje, allStars, pickStar, null, this);
     this.physics.add.collider(personaje, enemigos, gameOver, null, this); // entre circle y personaje 
+
+    this.input.keyboard.on("keydown-R", restartGame, this)
   }
 
   update() {
 
-    
     // Manejo de jugador
     if (cursors.right.isDown && personaje.body.touching.down) {
       personaje.setVelocityX(190)
@@ -147,18 +136,28 @@ export default class Game extends Phaser.Scene {
         personaje.setVelocityY(300)
       } 
     }
+
   }
 }
 
-var score;
-var txtScore;
-var enemigos;
-var allStars;
-var personaje;
-var plataformas;
-var cursors;
-var star;
+let score;
+let txtScore;
+let enemigos;
+let allStars;
+let personaje;
+let plataformas;
+let cursors;
+let star;
+let imagenCongratulation;
+let contador;
 
+var tiempo = {
+  minutos:'00',
+  segundos:'00',
+}
+
+var oldTime = tiempo;
+var bestTime = tiempo;
 
 const numR = Math.floor(Math.random() * 260) + 100
     console.log(numR)
@@ -179,14 +178,39 @@ function pickStar (personaje, star) {
       child.enableBody(true, child.x,100,true,true)
   });
   }
+  if (score === 1500) {
+    this.physics.add.sprite(400,300, "sprite")
+      .setSize(0.6,0.6)
+      .setScale(0.5,0.5);
+    this.add.text(340,120,"YOU WIN !!", {font:"30px Helvetica", fill:"#010101"})
+    this.physics.pause()
+  }
 }
 
 function gameOver () {
-  this.game.pause()
-  this.scene.start("game-over")
+  this.physics.pause()
+  this.physics.add.sprite(400,300, "GamesOver")
+    .setScale(0.45,0.45)
+    .setSize(0.3,0.3)
+  this.add.text(300,430,"Your Score " + score,{font:"20px Helvetica", fill:"#010101"})
+  this.add.text(300,480,"Press 'R' to Restart Game",{font:"20px Helvetica", fill:"#010101"})
 }
 
-function handleTimer () {
-  this.timer -= -1
-  this.timerText ()
+function restartGame () {
+  this.scene.restart()
+}
+
+function cuenta() {
+  contador.setText('\nTiempo: ' + tiempo.minutos + ':' + tiempo.segundos)
+  actualizarContador()
+}
+
+function actualizarContador () {
+  tiempo.segundos ++;
+  tiempo.segundos = (tiempo.segundos>= 10)? tiempo.segundos: '0' + tiempo.segundos;
+  if (tiempo.segundos >= 60) {
+    tiempo.segundos = '00',
+    tiempo.minutos ++;
+    tiempo.minutos = (tiempo.minutos >= 10)? tiempo.minutos: '0' + tiempo.minutos;
+  }
 }
