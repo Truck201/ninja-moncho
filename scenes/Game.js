@@ -8,15 +8,14 @@ export default class Game extends Phaser.Scene {
   init(data) {
     // Recupera el valore score
     score = data.score
-
-    // Gameover False
-    contador = 0;
     tiempo.minutos = "00"
-    tiempo.segundos = "00"
+    tiempo.segundos = "01"
+    pause = false
   }
 
   create() {
     
+    // crear un contador
     this.time.addEvent({
       delay:1000,
       loop: true,
@@ -48,7 +47,7 @@ export default class Game extends Phaser.Scene {
     txtScore = this.add.text(10,20,"Score: 0",{font:"20px Helvetica", fill:"#ff0000"})
     contador = this.add.text(480,10,"Tiempo: 00:00 ",{font:"20px Helvetica", fill:"#ff0000"})
 
-    // crear un contador
+    
 
     //crear plataforma
     plataformas = this.physics.add.staticGroup();
@@ -108,7 +107,6 @@ export default class Game extends Phaser.Scene {
   }
 
   update() {
-
     // Manejo de jugador
     if (cursors.right.isDown && personaje.body.touching.down) {
       personaje.setVelocityX(190)
@@ -152,14 +150,12 @@ let cursors;
 let star;
 let imagenCongratulation;
 let contador;
+let pause;
 
 var tiempo = {
   minutos:'00',
-  segundos:'00',
+  segundos:'01',
 }
-
-var oldTime = tiempo;
-var bestTime = tiempo;
 
 const numR = Math.floor(Math.random() * 260) + 100
     console.log(numR)
@@ -194,8 +190,10 @@ function gameOver () {
   this.physics.add.sprite(400,300, "GamesOver")
     .setScale(0.45,0.45)
     .setSize(0.3,0.3)
-  this.add.text(300,430,"Your Score " + score,{font:"20px Helvetica", fill:"#010101"})
+  this.add.text(230,430,"Your Score " + score,{font:"20px Helvetica", fill:"#010101"})
+  this.add.text(400,430,"You Time: " + tiempo.minutos + ":" + tiempo.segundos ,{font:"20px Helvetica", fill:"#010101"})
   this.add.text(300,480,"Press 'R' to Restart Game",{font:"20px Helvetica", fill:"#010101"})
+  pause = true
 }
 
 function restartGame () {
@@ -203,8 +201,11 @@ function restartGame () {
 }
 
 function cuenta() {
+  if (pause === false) {
   contador.setText('\nTiempo: ' + tiempo.minutos + ':' + tiempo.segundos)
+  }
   actualizarContador()
+
 }
 
 function actualizarContador () {
@@ -216,3 +217,4 @@ function actualizarContador () {
     tiempo.minutos = (tiempo.minutos >= 10)? tiempo.minutos: '0' + tiempo.minutos;
   }
 }
+

@@ -1,7 +1,5 @@
 import Game from "./scenes/Game.js"
 import Preload from "./scenes/preload.js";
-
-
 // Create a new Phaser config object
 const config = {
   type: Phaser.AUTO,
